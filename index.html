@@ -517,7 +517,7 @@
       <input
         type="text"
         id="plusCodeInput"
-        placeholder="e.g. 7Q2287QJ+9R"
+        placeholder="e.g. Q24P+FJ Caloocan"
         maxlength="20"
         autocomplete="off"
         autocorrect="off"
@@ -541,8 +541,8 @@
       <strong>How to get your Plus Code:</strong><br>
       1. Open <a href="https://maps.google.com" target="_blank">Google Maps</a> on your phone<br>
       2. Long-press your exact location on the map<br>
-      3. Tap the Plus Code that appears at the bottom (e.g. <strong>7Q2287QJ+9R</strong>)<br>
-      4. Tap <strong>Copy</strong> then paste it above
+      3. Tap the code that appears at the bottom — usually looks like <strong>Q24P+FJ Caloocan</strong><br>
+      4. Tap <strong>Copy</strong> then paste it above, exactly as copied
     </div>
   </div>
 
@@ -594,29 +594,26 @@ function toggleOtherBrand(val) {
 
 // ─── PLUS CODE INPUT ──────────────────────────────────────
 function onPlusCodeInput(raw) {
-  // Auto-uppercase and strip invalid chars
-  const cleaned = raw.toUpperCase().replace(/[^23456789CFGHJMPQRVWX+]/g, '');
+  // Allow letters/digits/+ for the code itself, plus spaces/commas for city name part
+  // Only uppercase the code portion (before first space), leave the rest as typed
   const input = document.getElementById('plusCodeInput');
-  if (input.value !== cleaned) {
-    input.value = cleaned;
-  }
-
   const clearBtn = document.getElementById('pcClearBtn');
-  clearBtn.classList.toggle('show', cleaned.length > 0);
+  clearBtn.classList.toggle('show', raw.trim().length > 0);
 
   // Reset state
   resolvedAddress = '';
   resolvedLat = null;
   resolvedLng = null;
 
-  if (cleaned.length < 8) {
+  const trimmed = raw.trim();
+  if (trimmed.length < 6) {
     hideAddressPreview();
     return;
   }
 
   // Debounce — wait for user to stop typing
   clearTimeout(pcDebounceTimer);
-  pcDebounceTimer = setTimeout(() => resolvePlusCode(cleaned), 600);
+  pcDebounceTimer = setTimeout(() => resolvePlusCode(trimmed), 700);
 }
 
 function clearPlusCode() {
@@ -644,46 +641,103 @@ function showAddressPreview(state, icon, label, value) {
   val.innerHTML   = value;
 }
 
-async function resolvePlusCode(code) {
-  // Validate format with Open Location Code library
+// Splits "Q24P+FJ Caloocan, Metro Manila" or "P3XH+JRP, Caloocan, Metro Manila"
+// into { code: "Q24P+FJ", place: "Caloocan, Metro Manila" }
+// Or returns { code: "7Q2287QJ+9R", place: "" } for full codes with no place text
+function splitPlusCodeInput(raw) {
+  const trimmed = raw.trim();
+  // Split on first whitespace OR comma, whichever comes first — handles
+  // both "CODE City" and "CODE, City" formats Google Maps produces.
+  const match = trimmed.match(/^([^\s,]+)[\s,]*(.*)$/);
+  if (!match) return { code: trimmed.toUpperCase(), place: '' };
+  return {
+    code: match[1].toUpperCase(),
+    place: match[2].trim()
+  };
+}
+
+async function resolvePlusCode(rawInput) {
   if (typeof OpenLocationCode === 'undefined') {
     showAddressPreview('error', '⚠️', 'Library not loaded', 'Please refresh and try again.');
     return;
   }
 
-  let isValid = false;
-  try { isValid = OpenLocationCode.isValid(code) && OpenLocationCode.isFull(code); }
-  catch(e) { isValid = false; }
+  const { code, place } = splitPlusCodeInput(rawInput);
 
-  if (!isValid) {
-    showAddressPreview('error', '⚠️', 'Invalid Plus Code', 'Check the code and try again. Example: 7Q2287QJ+9R');
+  // Basic shape check: must contain a + sign
+  if (!code.includes('+')) {
+    showAddressPreview('error', '⚠️', 'Invalid Plus Code',
+      'Make sure it includes a + sign. Example: Q24P+FJ Caloocan or 7Q2287QJ+9R');
     return;
   }
 
-  // Show loading
   showAddressPreview('loading', '', 'Looking up address…',
     '<span class="mini-spinner"></span> &nbsp;Checking location…');
 
   try {
-    // Decode Plus Code → lat/lng
-    const decoded = OpenLocationCode.decode(code);
-    const lat = decoded.latitudeCenter;
-    const lng = decoded.longitudeCenter;
+    let fullCode = code;
+    let lat, lng;
+
+    // Case 1: already a full code (starts with 2 chars of grid, length 11+)
+    let isFull = false;
+    try { isFull = OpenLocationCode.isValid(code) && OpenLocationCode.isFull(code); } catch(e) {}
+
+    if (isFull) {
+      const decoded = OpenLocationCode.decode(code);
+      lat = decoded.latitudeCenter;
+      lng = decoded.longitudeCenter;
+    } else {
+      // Case 2: short code — need an approximate reference location to recover the full code
+      let isShort = false;
+      try { isShort = OpenLocationCode.isValid(code) && OpenLocationCode.isShort(code); } catch(e) {}
+
+      if (!isShort) {
+        showAddressPreview('error', '⚠️', 'Invalid Plus Code',
+          'Check the code and try again. Example: Q24P+FJ Caloocan or 7Q2287QJ+9R');
+        return;
+      }
+
+      if (!place) {
+        showAddressPreview('error', '⚠️', 'City name needed',
+          'Short Plus Codes need the city name too — e.g. "Q24P+FJ Caloocan". Try copying the full text from Google Maps.');
+        return;
+      }
+
+      // Geocode the place name to get an approximate reference point
+      const geoUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`;
+      const geoResp = await fetch(geoUrl, {
+        headers: { 'Accept-Language': 'en', 'User-Agent': 'RKCO-Gas-Form/1.0' }
+      });
+      if (!geoResp.ok) throw new Error('Place lookup failed');
+      const geoData = await geoResp.json();
+
+      if (!geoData || geoData.length === 0) {
+        showAddressPreview('error', '⚠️', 'City not recognized',
+          `Couldn't find "${place}". Try the full Plus Code instead (e.g. 7Q2287QJ+9R) — long-press your pin in Google Maps and look for the longer code.`);
+        return;
+      }
+
+      const refLat = parseFloat(geoData[0].lat);
+      const refLng = parseFloat(geoData[0].lon);
+
+      fullCode = OpenLocationCode.recoverNearest(code, refLat, refLng);
+      const decoded = OpenLocationCode.decode(fullCode);
+      lat = decoded.latitudeCenter;
+      lng = decoded.longitudeCenter;
+    }
+
     resolvedLat = lat;
     resolvedLng = lng;
 
-    // Reverse geocode via Nominatim (free, no API key)
+    // Reverse geocode the resolved coordinates → readable address
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
     const resp = await fetch(url, {
       headers: { 'Accept-Language': 'en', 'User-Agent': 'RKCO-Gas-Form/1.0' }
     });
-
     if (!resp.ok) throw new Error('Geocoder error');
-
     const data = await resp.json();
 
     if (data && data.display_name) {
-      // Build a short readable address
       const a = data.address || {};
       const parts = [
         a.house_number,
@@ -700,11 +754,11 @@ async function resolvePlusCode(code) {
       showAddressPreview('error', '📍', 'No address found',
         'Location recorded by coordinates. You can still submit.');
     }
+
   } catch (err) {
-    // Nominatim failed — still keep the Plus Code, just no address
     resolvedAddress = '';
     showAddressPreview('error', '📍', 'Could not look up address',
-      'No internet or geocoder unavailable. Plus Code is still saved — you can submit.');
+      'No internet or geocoder unavailable right now. You can still submit — we\'ll confirm the address with you directly.');
   }
 }
 
@@ -731,7 +785,7 @@ async function handleSubmit() {
   const brand        = document.getElementById('currentBrand').value;
   const otherBrand   = document.getElementById('otherBrandName').value.trim();
   const finalBrand   = brand === 'Other' ? otherBrand : brand;
-  const plusCode     = document.getElementById('plusCodeInput').value.trim().toUpperCase();
+  const plusCodeRaw  = document.getElementById('plusCodeInput').value.trim();
   const isIndividual = document.getElementById('individualToggle').checked;
 
   // Validation
@@ -741,22 +795,21 @@ async function handleSubmit() {
   if (!size)                                { showStatus('Please select your cylinder size.', 'error'); return; }
   if (!brand)                               { showStatus('Please select your current LPG brand.', 'error'); return; }
   if (brand === 'Other' && !otherBrand)     { showStatus('Please specify your LPG brand.', 'error'); return; }
-  if (!plusCode)                            { showStatus('Please enter your Plus Code. See the instructions below the field.', 'error'); return; }
+  if (!plusCodeRaw)                         { showStatus('Please enter your Plus Code. See the instructions below the field.', 'error'); return; }
 
-  // Validate Plus Code format
-  let plusCodeValid = false;
-  try { plusCodeValid = OpenLocationCode.isValid(plusCode) && OpenLocationCode.isFull(plusCode); }
-  catch(e) {}
-  if (!plusCodeValid) { showStatus('The Plus Code entered doesn\'t look right. Example format: 7Q2287QJ+9R', 'error'); return; }
-
-  // If address not yet resolved (user typed fast), resolve now
-  if (!resolvedAddress && resolvedLat === null) {
-    try {
-      const decoded = OpenLocationCode.decode(plusCode);
-      resolvedLat = decoded.latitudeCenter;
-      resolvedLng = decoded.longitudeCenter;
-    } catch(e) {}
+  // If the address preview hasn't resolved yet (e.g. user typed and hit submit fast),
+  // resolve now and wait for it before continuing.
+  if (resolvedLat === null) {
+    showStatus('Confirming your location…', 'info');
+    await resolvePlusCode(plusCodeRaw);
   }
+
+  if (resolvedLat === null) {
+    showStatus('We couldn\'t confirm that Plus Code. Please check it against the preview above and try again.', 'error');
+    return;
+  }
+
+  const plusCode = splitPlusCodeInput(plusCodeRaw).code;
 
   const btn = document.getElementById('submitBtn');
   const lbl = document.getElementById('btnLabel');
