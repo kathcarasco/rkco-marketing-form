@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>RKCO Gas — First Order Promo</title>
-<script src="https://cdn.jsdelivr.net/npm/open-location-code@1.0.4/src/openlocationcode.js"
-  onerror="this.onerror=null;this.src='https://unpkg.com/open-location-code@1.0.4/src/openlocationcode.js';"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -20,7 +18,7 @@
 
   .hero {
     background: linear-gradient(160deg, #C03A0E 0%, #E8501A 60%, #F06A30 100%);
-    padding: 2rem 1.25rem 4.5rem;
+    padding: 1.5rem 1.25rem 3.75rem;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -56,17 +54,17 @@
   }
   .hero h1 {
     color: #fff;
-    font-size: 1.65rem;
+    font-size: 1.5rem;
     font-weight: 800;
     line-height: 1.25;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
   }
   .hero h1 em { font-style: normal; color: #FFD580; }
   .hero-sub {
     color: rgba(255,255,255,0.82);
     font-size: 0.875rem;
     line-height: 1.55;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.25rem;
     max-width: 300px;
     margin-left: auto; margin-right: auto;
   }
@@ -136,13 +134,13 @@
 
   .form-card {
     max-width: 480px;
-    margin: 1.75rem auto 0;
+    margin: 1.25rem auto 0;
     background: #fff;
     border-radius: 18px;
     box-shadow: 0 2px 24px rgba(0,0,0,0.08);
-    padding: 1.6rem 1.35rem 2rem;
-    margin-left: 0.9rem;
-    margin-right: 0.9rem;
+    padding: 1.35rem 1.2rem 1.5rem;
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
   }
   @media (min-width: 520px) { .form-card { margin-left: auto; margin-right: auto; } }
 
@@ -157,7 +155,7 @@
     border-bottom: 1.5px solid #FFE8DF;
   }
 
-  .field-group { margin-bottom: 1rem; }
+  .field-group { margin-bottom: 0.75rem; }
 
   label {
     display: block;
@@ -168,12 +166,13 @@
   }
   label .req { color: #E8501A; margin-left: 2px; }
   label .opt { color: #BBB; font-weight: 400; font-size: 0.71rem; margin-left: 4px; }
+  label .agent { color: #999; font-weight: 400; font-size: 0.71rem; margin-left: 4px; }
 
   input[type="text"],
   input[type="tel"],
-  select {
+  select,
+  textarea {
     width: 100%;
-    height: 48px;
     padding: 0 13px;
     border: 1.5px solid #E5E5E5;
     border-radius: 10px;
@@ -184,6 +183,15 @@
     outline: none;
     -webkit-appearance: none;
     appearance: none;
+    font-family: inherit;
+  }
+  input[type="text"], input[type="tel"], select { height: 48px; }
+  textarea {
+    height: 72px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    resize: vertical;
+    line-height: 1.4;
   }
   select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -192,7 +200,7 @@
     padding-right: 34px;
     cursor: pointer;
   }
-  input:focus, select:focus { border-color: #E8501A; background: #fff; }
+  input:focus, select:focus, textarea:focus { border-color: #E8501A; background: #fff; }
   input:disabled { opacity: 0.4; cursor: not-allowed; background: #F0F0F0; }
 
   .hint { font-size: 0.71rem; color: #999; margin-top: 0.3rem; line-height: 1.45; }
@@ -200,87 +208,33 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 340px) { .two-col { grid-template-columns: 1fr; } }
 
-  .divider { height: 1px; background: #F2F2F2; margin: 1.4rem 0; }
+  .divider { height: 1px; background: #F2F2F2; margin: 1rem 0; }
 
-  /* ── PLUS CODE SECTION ── */
-  .plus-code-input-wrap { position: relative; }
-
-  .plus-code-input-wrap input {
-    text-transform: uppercase;
-    font-family: 'Courier New', monospace;
-    font-size: 1.05rem;
-    letter-spacing: 0.05em;
-    padding-right: 48px;
-  }
-
-  .pc-clear-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    color: #CCC;
-    cursor: pointer;
-    padding: 4px;
-    display: none;
-    line-height: 1;
-  }
-  .pc-clear-btn.show { display: block; }
-
-  /* address preview box */
-  .address-preview {
-    margin-top: 0.5rem;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    font-size: 0.84rem;
-    line-height: 1.5;
-    display: none;
-    align-items: flex-start;
-    gap: 8px;
-    transition: all 0.2s;
-  }
-  .address-preview.loading {
-    display: flex;
+  .agent-section {
     background: #F7F7F7;
-    color: #999;
     border: 1.5px dashed #DDD;
+    border-radius: 12px;
+    padding: 0.9rem 0.9rem 0.6rem;
+    margin-top: 0.85rem;
   }
-  .address-preview.success {
-    display: flex;
-    background: #F0FFF6;
-    color: #1C5C38;
-    border: 1.5px solid #4CAF50;
+  .agent-section .section-label {
+    border-bottom: none;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0;
   }
-  .address-preview.error {
-    display: flex;
-    background: #FFF8F0;
-    color: #A0521A;
-    border: 1.5px solid #FFB347;
+  .agent-note {
+    font-size: 0.74rem;
+    color: #888;
+    margin-bottom: 0.6rem;
+    line-height: 1.5;
   }
-  .address-preview .addr-icon { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
-  .address-preview .addr-text { flex: 1; }
-  .address-preview .addr-label {
-    font-size: 0.67rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 2px;
-    opacity: 0.7;
-  }
-  .address-preview .addr-value { font-weight: 600; }
 
-  .mini-spinner {
-    width: 14px; height: 14px;
-    border: 2px solid #DDD;
-    border-top-color: #999;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: inline-block;
-    flex-shrink: 0;
+
+  .plus-code-field input {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── STATUS BOX ── */
   .status-box {
@@ -301,7 +255,7 @@
   /* ── SUBMIT ── */
   .submit-btn {
     width: 100%;
-    height: 54px;
+    height: 50px;
     background: #E8501A;
     color: #fff;
     border: none;
@@ -314,7 +268,7 @@
     justify-content: center;
     gap: 8px;
     transition: background 0.15s, transform 0.1s;
-    margin-top: 1.1rem;
+    margin-top: 0.85rem;
     letter-spacing: 0.01em;
     touch-action: manipulation;
   }
@@ -330,6 +284,7 @@
     animation: spin 0.7s linear infinite;
     display: inline-block; flex-shrink: 0;
   }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── SUCCESS ── */
   .success-screen {
@@ -399,19 +354,6 @@
     flex-shrink: 0;
     cursor: pointer;
   }
-
-  /* how to get plus code hint box */
-  .pluscode-help {
-    background: #F7F7F7;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    margin-top: 0.75rem;
-    font-size: 0.78rem;
-    color: #555;
-    line-height: 1.6;
-  }
-  .pluscode-help strong { color: #1C1C1E; }
-  .pluscode-help a { color: #E8501A; text-decoration: none; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -470,6 +412,15 @@
   </div>
 
   <div class="divider"></div>
+  <div class="section-label">Delivery Address</div>
+
+  <div class="field-group">
+    <label for="addressInput">Address <span class="req">*</span></label>
+    <textarea id="addressInput" placeholder="House/Unit No., Street, Barangay, City"></textarea>
+    <p class="hint">Write it the way you'd give directions to a rider — house number, street, barangay, landmark if helpful.</p>
+  </div>
+
+  <div class="divider"></div>
   <div class="section-label">Current LPG Setup</div>
   <p class="hint" style="margin-bottom:1rem;">Helps us prepare the right tank for your first order.</p>
 
@@ -506,44 +457,27 @@
     <input type="text" id="otherBrandName" placeholder="e.g. Petron Gasul, Phoenix…" />
   </div>
 
-  <div class="divider"></div>
-  <div class="section-label">Delivery Location</div>
+  <!-- AGENT-ONLY SECTION -->
+  <div class="agent-section">
+    <div class="section-label">For Rider / Agent Use</div>
+    <p class="agent-note">Customer filling this out? Leave it blank — our rider/agent fills this on-site.</p>
 
-  <div class="field-group">
-    <label for="plusCodeInput">
-      Plus Code <span class="req">*</span>
-      <span style="font-weight:400;color:#BBB;font-size:0.71rem;margin-left:4px;">— from Google Maps</span>
-    </label>
-    <div class="plus-code-input-wrap">
+    <div class="field-group plus-code-field">
+      <label for="plusCodeInput">Map Location</label>
       <input
         type="text"
         id="plusCodeInput"
-        placeholder="e.g. Q33G+3PG, Novaliches, Caloocan"
-        maxlength="80"
+        placeholder="Paste Plus Code, coordinates, or address"
         autocomplete="off"
         autocorrect="off"
         spellcheck="false"
-        oninput="onPlusCodeInput(this.value)"
       />
-      <button class="pc-clear-btn" id="pcClearBtn" onclick="clearPlusCode()" type="button">✕</button>
-    </div>
-
-    <!-- Address preview appears here -->
-    <div class="address-preview" id="addressPreview">
-      <span class="addr-icon"></span>
-      <div class="addr-text">
-        <div class="addr-label" id="addrLabel"></div>
-        <div class="addr-value" id="addrValue"></div>
-      </div>
-    </div>
-
-    <!-- How to get a Plus Code -->
-    <div class="pluscode-help">
-      <strong>How to get your Plus Code:</strong><br>
-      1. Open <a href="https://maps.google.com" target="_blank">Google Maps</a> on your phone<br>
-      2. Long-press your exact location on the map<br>
-      3. Tap the code that appears at the bottom — it will show something like <strong>Q33G+3PG, Novaliches, Caloocan, Metro Manila</strong><br>
-      4. Tap <strong>Copy</strong> then paste <u>the entire line</u> above — don't shorten it, the city and province help us confirm your address.
+      <p class="hint">
+        Paste <strong>any</strong> of these from Google Maps — whichever is available:<br>
+        &bull; Plus Code → <em>long-press location → tap the code (e.g. Q33G+3PG Caloocan)</em><br>
+        &bull; Coordinates → <em>long-press → tap the numbers shown (e.g. 14.7521, 121.0455)</em><br>
+        &bull; Nothing available? Leave blank — written address above is enough.
+      </p>
     </div>
   </div>
 
@@ -572,13 +506,6 @@
 <script>
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkpxPZCCr3ppDFtVllY7PmDRyHqqCYoyGK1Z-d08u1TtX6UnUxthvCYZIKZjlTKrql/exec';
 
-// ─── STATE ────────────────────────────────────────────────
-let resolvedAddress = '';   // from Nominatim
-let resolvedLat     = null;
-let resolvedLng     = null;
-let pcDebounceTimer = null;
-
-// ─── FIELD TOGGLES ────────────────────────────────────────
 function toggleIndividual(checked) {
   const input = document.getElementById('businessName');
   const req   = document.getElementById('bizReq');
@@ -593,222 +520,6 @@ function toggleOtherBrand(val) {
   if (val !== 'Other') document.getElementById('otherBrandName').value = '';
 }
 
-// ─── PLUS CODE INPUT ──────────────────────────────────────
-function onPlusCodeInput(raw) {
-  // Allow letters/digits/+ for the code itself, plus spaces/commas for city name part
-  // Only uppercase the code portion (before first space), leave the rest as typed
-  const input = document.getElementById('plusCodeInput');
-  const clearBtn = document.getElementById('pcClearBtn');
-  clearBtn.classList.toggle('show', raw.trim().length > 0);
-
-  // Reset state
-  resolvedAddress = '';
-  resolvedLat = null;
-  resolvedLng = null;
-
-  const trimmed = raw.trim();
-  if (trimmed.length < 6) {
-    hideAddressPreview();
-    return;
-  }
-
-  // Debounce — wait for user to stop typing
-  clearTimeout(pcDebounceTimer);
-  pcDebounceTimer = setTimeout(() => resolvePlusCode(trimmed), 700);
-}
-
-function clearPlusCode() {
-  document.getElementById('plusCodeInput').value = '';
-  document.getElementById('pcClearBtn').classList.remove('show');
-  hideAddressPreview();
-  resolvedAddress = '';
-  resolvedLat = null;
-  resolvedLng = null;
-}
-
-function hideAddressPreview() {
-  const box = document.getElementById('addressPreview');
-  box.className = 'address-preview';
-}
-
-function showAddressPreview(state, icon, label, value) {
-  const box  = document.getElementById('addressPreview');
-  const ico  = box.querySelector('.addr-icon');
-  const lbl  = document.getElementById('addrLabel');
-  const val  = document.getElementById('addrValue');
-  box.className = `address-preview ${state}`;
-  ico.textContent = icon;
-  lbl.textContent = label;
-  val.innerHTML   = value;
-}
-
-// Splits "Q24P+FJ Caloocan, Metro Manila" or "P3XH+JRP, Caloocan, Metro Manila"
-// into { code: "Q24P+FJ", place: "Caloocan, Metro Manila" }
-// Or returns { code: "7Q2287QJ+9R", place: "" } for full codes with no place text
-function splitPlusCodeInput(raw) {
-  const trimmed = raw.trim();
-  // Split on first whitespace OR comma, whichever comes first — handles
-  // both "CODE City" and "CODE, City" formats Google Maps produces.
-  const match = trimmed.match(/^([^\s,]+)[\s,]*(.*)$/);
-  if (!match) return { code: trimmed.toUpperCase(), place: '' };
-  return {
-    code: match[1].toUpperCase(),
-    place: match[2].trim()
-  };
-}
-
-// Waits for the OpenLocationCode library to finish loading.
-// Retries for up to ~6 seconds before giving up — handles slow mobile connections
-// where the CDN script tag hasn't finished executing yet.
-function waitForOLC(maxWaitMs = 6000) {
-  return new Promise((resolve, reject) => {
-    const start = Date.now();
-    const check = () => {
-      if (typeof OpenLocationCode !== 'undefined') {
-        resolve();
-      } else if (Date.now() - start > maxWaitMs) {
-        reject(new Error('Library failed to load'));
-      } else {
-        setTimeout(check, 150);
-      }
-    };
-    check();
-  });
-}
-
-async function resolvePlusCode(rawInput) {
-  showAddressPreview('loading', '', 'Loading…',
-    '<span class="mini-spinner"></span> &nbsp;Preparing location lookup…');
-
-  try {
-    await waitForOLC();
-  } catch (e) {
-    showAddressPreview('error', '⚠️', 'Location service unavailable',
-      'Check your internet connection and reload the page. You can also submit and we\'ll confirm your address by phone.');
-    return;
-  }
-
-  const { code, place } = splitPlusCodeInput(rawInput);
-
-  // Basic shape check: must contain a + sign
-  if (!code.includes('+')) {
-    showAddressPreview('error', '⚠️', 'Invalid Plus Code',
-      'Make sure it includes a + sign. Example: Q24P+FJ Caloocan or 7Q2287QJ+9R');
-    return;
-  }
-
-  showAddressPreview('loading', '', 'Looking up address…',
-    '<span class="mini-spinner"></span> &nbsp;Checking location…');
-
-  try {
-    let fullCode = code;
-    let lat, lng;
-
-    // Case 1: already a full code (starts with 2 chars of grid, length 11+)
-    let isFull = false;
-    try { isFull = OpenLocationCode.isValid(code) && OpenLocationCode.isFull(code); } catch(e) {}
-
-    if (isFull) {
-      const decoded = OpenLocationCode.decode(code);
-      lat = decoded.latitudeCenter;
-      lng = decoded.longitudeCenter;
-    } else {
-      // Case 2: short code — need an approximate reference location to recover the full code
-      let isShort = false;
-      try { isShort = OpenLocationCode.isValid(code) && OpenLocationCode.isShort(code); } catch(e) {}
-
-      if (!isShort) {
-        showAddressPreview('error', '⚠️', 'Invalid Plus Code',
-          'Check the code and try again. Example: Q24P+FJ Caloocan or 7Q2287QJ+9R');
-        return;
-      }
-
-      if (!place) {
-        showAddressPreview('error', '⚠️', 'City name needed',
-          'Short Plus Codes need the city name too — e.g. "Q24P+FJ Caloocan". Try copying the full text from Google Maps.');
-        return;
-      }
-
-      // Geocode the place name to get an approximate reference point.
-      // Try the full place text first (most precise — e.g. "Novaliches, Caloocan,
-      // Metro Manila"), then progressively drop the broadest trailing segment
-      // (e.g. "Metro Manila") to retry with what's left, always anchored to
-      // the Philippines so a generic district name doesn't match abroad.
-      const segments = place.split(',').map(s => s.trim()).filter(Boolean);
-      const attempts = [];
-      if (place) attempts.push(`${place}, Philippines`);
-      for (let i = segments.length - 1; i > 0; i--) {
-        attempts.push(`${segments.slice(0, i).join(', ')}, Philippines`);
-      }
-      if (segments.length > 0) attempts.push(`${segments[0]}, Philippines`);
-      if (place) attempts.push(place);
-
-      let refLat = null, refLng = null;
-      for (const query of attempts) {
-        try {
-          const geoUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=ph`;
-          const geoResp = await fetch(geoUrl, {
-            headers: { 'Accept-Language': 'en', 'User-Agent': 'RKCO-Gas-Form/1.0' }
-          });
-          if (!geoResp.ok) continue;
-          const geoData = await geoResp.json();
-          if (geoData && geoData.length > 0) {
-            refLat = parseFloat(geoData[0].lat);
-            refLng = parseFloat(geoData[0].lon);
-            break;
-          }
-        } catch (e) { /* try next attempt */ }
-      }
-
-      if (refLat === null) {
-        showAddressPreview('error', '⚠️', 'City not recognized',
-          `Couldn't find "${place}" in the Philippines. Try copying the full text again from Google Maps, including the city and province.`);
-        return;
-      }
-
-      fullCode = OpenLocationCode.recoverNearest(code, refLat, refLng);
-      const decoded = OpenLocationCode.decode(fullCode);
-      lat = decoded.latitudeCenter;
-      lng = decoded.longitudeCenter;
-    }
-
-    resolvedLat = lat;
-    resolvedLng = lng;
-
-    // Reverse geocode the resolved coordinates → readable address
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
-    const resp = await fetch(url, {
-      headers: { 'Accept-Language': 'en', 'User-Agent': 'RKCO-Gas-Form/1.0' }
-    });
-    if (!resp.ok) throw new Error('Geocoder error');
-    const data = await resp.json();
-
-    if (data && data.display_name) {
-      const a = data.address || {};
-      const parts = [
-        a.house_number,
-        a.road || a.pedestrian || a.footway,
-        a.suburb || a.neighbourhood || a.village,
-        a.city || a.town || a.municipality,
-        a.state || a.province,
-      ].filter(Boolean);
-
-      resolvedAddress = parts.length > 0 ? parts.join(', ') : data.display_name;
-      showAddressPreview('success', '📍', 'Detected Address', resolvedAddress);
-    } else {
-      resolvedAddress = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-      showAddressPreview('error', '📍', 'No address found',
-        'Location recorded by coordinates. You can still submit.');
-    }
-
-  } catch (err) {
-    resolvedAddress = '';
-    showAddressPreview('error', '📍', 'Could not look up address',
-      'No internet or geocoder unavailable right now. You can still submit — we\'ll confirm the address with you directly.');
-  }
-}
-
-// ─── STATUS ───────────────────────────────────────────────
 function showStatus(msg, type) {
   const box = document.getElementById('statusBox');
   const icons = { info: '⏳', error: '⚠️', success: '✓' };
@@ -819,7 +530,6 @@ function hideStatus() {
   document.getElementById('statusBox').className = 'status-box';
 }
 
-// ─── SUBMIT ───────────────────────────────────────────────
 async function handleSubmit() {
   hideStatus();
 
@@ -831,31 +541,19 @@ async function handleSubmit() {
   const brand        = document.getElementById('currentBrand').value;
   const otherBrand   = document.getElementById('otherBrandName').value.trim();
   const finalBrand   = brand === 'Other' ? otherBrand : brand;
-  const plusCodeRaw  = document.getElementById('plusCodeInput').value.trim();
+  const address      = document.getElementById('addressInput').value.trim();
+  const plusCode     = document.getElementById('plusCodeInput').value.trim();
+
   const isIndividual = document.getElementById('individualToggle').checked;
 
-  // Validation
-  if (!fullName)                            { showStatus('Please enter your full name.', 'error'); return; }
-  if (!isIndividual && !business)           { showStatus('Please enter your business name, or tick the individual checkbox.', 'error'); return; }
-  if (!c1)                                  { showStatus('Please enter at least one contact number.', 'error'); return; }
-  if (!size)                                { showStatus('Please select your cylinder size.', 'error'); return; }
-  if (!brand)                               { showStatus('Please select your current LPG brand.', 'error'); return; }
-  if (brand === 'Other' && !otherBrand)     { showStatus('Please specify your LPG brand.', 'error'); return; }
-  if (!plusCodeRaw)                         { showStatus('Please enter your Plus Code. See the instructions below the field.', 'error'); return; }
-
-  // If the address preview hasn't resolved yet (e.g. user typed and hit submit fast),
-  // resolve now and wait for it before continuing.
-  if (resolvedLat === null) {
-    showStatus('Confirming your location…', 'info');
-    await resolvePlusCode(plusCodeRaw);
-  }
-
-  if (resolvedLat === null) {
-    showStatus('We couldn\'t confirm that Plus Code. Please check it against the preview above and try again.', 'error');
-    return;
-  }
-
-  const plusCode = splitPlusCodeInput(plusCodeRaw).code;
+  // Validation — no Plus Code requirement, agent/rider fills that in later
+  if (!fullName)                        { showStatus('Please enter your full name.', 'error'); return; }
+  if (!isIndividual && !business)       { showStatus('Please enter your business name, or tick the individual checkbox.', 'error'); return; }
+  if (!c1)                              { showStatus('Please enter at least one contact number.', 'error'); return; }
+  if (!size)                            { showStatus('Please select your cylinder size.', 'error'); return; }
+  if (!brand)                           { showStatus('Please select your current LPG brand.', 'error'); return; }
+  if (brand === 'Other' && !otherBrand) { showStatus('Please specify your LPG brand.', 'error'); return; }
+  if (!address)                         { showStatus('Please enter your delivery address.', 'error'); return; }
 
   const btn = document.getElementById('submitBtn');
   const lbl = document.getElementById('btnLabel');
@@ -864,17 +562,15 @@ async function handleSubmit() {
   showStatus('Sending your registration…', 'info');
 
   const payload = {
-    submittedAt:      new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
-    fullName:         fullName,
-    businessName:     isIndividual ? '(Individual)' : business,
-    contact1:         c1,
-    contact2:         c2,
-    cylinderSize:     size,
-    currentBrand:     finalBrand,
-    plusCode:         plusCode,
-    resolvedAddress:  resolvedAddress || '(address lookup unavailable)',
-    latitude:         resolvedLat || '',
-    longitude:        resolvedLng || ''
+    submittedAt:  new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
+    fullName:     fullName,
+    businessName: isIndividual ? '(Individual)' : business,
+    contact1:     c1,
+    contact2:     c2,
+    cylinderSize: size,
+    currentBrand: finalBrand,
+    address:      address,
+    plusCode:     plusCode || ''
   };
 
   try {
@@ -896,10 +592,10 @@ async function handleSubmit() {
       <div class="sdv">${c1}${c2 ? ' / ' + c2 : ''}</div>
       <div class="sdl">LPG Setup</div>
       <div class="sdv">${size} — ${finalBrand}</div>
-      <div class="sdl">Plus Code</div>
-      <div class="sdv code">${plusCode}</div>
-      <div class="sdl">Delivery Address</div>
-      <div class="sdv">${resolvedAddress || '—'}</div>
+      <div class="sdl">Address</div>
+      <div class="sdv">${address}</div>
+      ${plusCode ? `<div class="sdl">Plus Code</div><div class="sdv code">${plusCode}</div>` : ''}
+      ${!plusCode && !lat ? `<div class="sdl">Location</div><div class="sdv" style="color:#999;">To be confirmed by rider/agent</div>` : ''}
     `;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
